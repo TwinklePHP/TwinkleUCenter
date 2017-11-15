@@ -1,0 +1,13 @@
+{
+  "name": "twinkle/twinkle-uCenter",
+  "description": "用户中心模块",
+  "minimum-stability": "dev",
+  "require": {
+    "twinkle/twinkle-api": "dev-master",
+    "yiisoft/yii2": "^2.0"
+  },
+  "autoload": {
+    "psr-4": {
+    }
+  }
+}
