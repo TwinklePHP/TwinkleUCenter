@@ -20,7 +20,7 @@ return [
             'enableStrictParsing' => false,
             'showScriptName' => false,
             'rules' => [
-                '<controller:rpc>/<name:[\w-]+><nouse:(.*)>' => '<controller>/index',
+                '<controller:(rpc|api)>/<name:[\w-]+><nouse:(.*)>' => '<controller>/index',
                 '<controller:[\w-]+>/<action:[\w-]+><nouse:(.*)>' => '<controller>/<action>',
                 '<controller:[\w-]+><nouse:(.*)>' => '<controller>/index',
             ],

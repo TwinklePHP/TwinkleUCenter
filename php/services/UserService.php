@@ -14,5 +14,15 @@ use app\base\Service;
 class UserService extends Service
 {
 
-
+    /**
+     * 登录接口
+     *
+     * @param $email
+     * @param $password
+     * @return array
+     */
+    public function login($email, $password = '')
+    {
+        return $this->format(['email'=>$email]);
+    }
 }

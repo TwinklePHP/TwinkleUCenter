@@ -13,6 +13,11 @@ abstract class Service
 {
     public $result = ['status' => 0, 'msg' => 'success'];
 
+    public function __construct()
+    {
+
+    }
+
     /**
      * 格式化输出
      *
