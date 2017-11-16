@@ -14,15 +14,4 @@ use app\base\Service;
 class UserService extends Service
 {
 
-    /**
-     * 通过ID查用户信息
-     *
-     * @param $userId
-     * @return array
-     */
-    public function getUserInfoById($userId)
-    {
-        return $this->format(['user_id' => $userId]);
-    }
-
 }
