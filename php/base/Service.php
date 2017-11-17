@@ -26,15 +26,18 @@ abstract class Service
      */
     protected function format($data = null)
     {
-        if (is_bool($data)) {
-            $data['status'] = empty($data) ?: 0;
-            $data['msg'] = empty($data) ? 'fail' : 'success';
+        $result = [];
+        if (is_array($data)) {
+            $result = $data;
+        } elseif (is_bool($data) || is_int($data)) {
+            $result['status'] = empty($data) ? 1 : 0;
+            $result['msg'] = empty($data) ? 'fail' : 'success';
         } elseif (is_string($data)) {
-            $data['data'] = $data;
+            $result['data'] = $data;
         } elseif (is_object($data)) {
-            $data = (array)$data;
+            $result = (array)$data;
         }
 
-        return array_merge($this->result, $data);
+        return array_merge($this->result, $result);
     }
 }

@@ -6,7 +6,7 @@
  * Time: 16:05
  */
 
-return [
+$config = [
     'id' => 'twinkledeals',
     'basePath' => dirname(__DIR__),
     'language' => 'en', //默认语言
@@ -25,5 +25,21 @@ return [
                 '<controller:[\w-]+><nouse:(.*)>' => '<controller>/index',
             ],
         ],
+        'db' => [
+            'class' => 'yii\db\Connection',
+            'charset' => 'utf8',
+            'enableSchemaCache' => YII_ENV_PROD,
+            'schemaCacheDuration' => 3600,
+            'schemaCache' => 'cache',
+        ]
+    ],
+    'params' => [
+        'passToken' => 'dda0cf5854f6b403123b27775531ee89'
     ]
 ];
+
+if (is_file($file = __DIR__ . '/web.' . YII_ENV . '.php')) {
+    $config = yii\helpers\ArrayHelper::merge($config, require($file));
+}
+
+return $config;

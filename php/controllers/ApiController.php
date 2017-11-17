@@ -8,11 +8,10 @@
 
 namespace app\controllers;
 
-
+use Yii;
 use app\base\api\Controller;
 use app\helpers\Str;
 use twinkle\service\Api;
-use Yii;
 
 class ApiController extends Controller
 {
