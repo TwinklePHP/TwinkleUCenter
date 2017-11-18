@@ -14,23 +14,20 @@ class Str
     /**
      * 字符转换
      *
-     * @param $string
+     * @param string $string
      * @param string $separator 分割符
-     * @return mixed
+     * @param bool $lcFirst 是否首字母小写
+     * @return string
      */
-    public static function ucWords($string, $separator = '-')
+    public static function ucWords($string, $separator = '-',$lcFirst = false)
     {
-        static $ucWords = [];
-        $key = md5($string);
+        $string = str_replace($separator, ' ', $string);
+        $string = ucwords($string);
+        $string = str_replace(' ', '', $string);
+        $lcFirst && $string = lcfirst($string);
 
-        if (!isset($ucWords[$key])) {
-            $string = str_replace($separator, ' ', $string);
-            $string = ucwords($string);
-            $string = str_replace(' ', '', $string);
-            $ucWords[$key] = $string;
-        }
+        return $string;
 
-        return $ucWords[$key];
     }
 
     /**

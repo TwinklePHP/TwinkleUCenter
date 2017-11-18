@@ -31,6 +31,17 @@ class ActiveRecord extends \yii\db\ActiveRecord
     }
 
     /**
+     * 查询列表
+     *
+     * @param array $params
+     * @return array | false
+     */
+    public function getList($params = [])
+    {
+        return $this->setWhere($params)->asArray()->all();
+    }
+
+    /**
      * 填加或更新数据
      *
      * @param array $data
@@ -83,6 +94,27 @@ class ActiveRecord extends \yii\db\ActiveRecord
 
         foreach ($params as $key => $value) {
             switch ($key) {
+                case 'page':
+                    break;
+                case 'alias':
+                    $obj->alias($value);
+                    break;
+                case 'left join':
+                    foreach ($value as $k => $v) {
+                        $obj->join($key, $k, $v);
+                    }
+                    break;
+                case 'limit':
+                case 'pageSize':
+                    $obj->limit($value);
+                    break;
+                case 'offset':
+                    $obj->offset($value);
+                    break;
+                case 'select':
+                    $obj->select($value);
+                    break;
+                case 'in':
                 case '>':
                 case '>=':
                 case '<':
@@ -92,7 +124,7 @@ class ActiveRecord extends \yii\db\ActiveRecord
                     }
                     break;
                 case 'orderBy':
-
+                    $obj->orderBy($value);
                     break;
                 default:
                     $_key = $key;

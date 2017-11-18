@@ -8,18 +8,18 @@
 
 namespace app\controllers;
 
-use Yii;
+use app\base\rpc\Controller;
 use app\helpers\Str;
 use twinkle\service\Api;
-use app\base\rpc\Controller;
+use Yii;
 
 class RpcController extends Controller
 {
 
     public function actionIndex()
     {
-        $serviceName = Yii::$app->request->get('name','NotFound');
-        $class = '\\app\\services\\' . Str::ucWords($serviceName).'Service';
+        $serviceName = Yii::$app->request->get('name', 'NotFound');
+        $class = '\\app\\services\\' . Str::ucWords($serviceName) . 'Service';
         new Api([
             'type' => 'rpc',
             'driver' => 'Yar',

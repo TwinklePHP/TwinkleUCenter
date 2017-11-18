@@ -8,8 +8,8 @@
 
 namespace app\models;
 
-use Yii;
 use app\base\ActiveRecord;
+use Yii;
 
 /**
  * Class UserInfo
@@ -27,15 +27,26 @@ class UserInfo extends ActiveRecord
     {
         return [
             [['email', 'password', 'first_name'], 'required', 'message' => '数据不能为空'],
-            [['email'],'unique','message'=>'邮箱已注册']
+            [['email'], 'unique', 'message' => '邮箱已注册']
         ];
     }
+
+    public function getUser($params = [])
+    {
+        if (empty($params)) {
+            return false;
+        }
+        $params['limit'] = 1;
+        $userList = $this->getList($params);
+        return empty($userList) ? false : $userList[0];
+    }
+
 
     public function beforeSave($insert)
     {
         if ($insert) {
-            $this->salt = md5($this->password);
-            $this->password = md5($this->salt.Yii::$app->params['passToken']);
+            $this->salt = md5(rand());
+            $this->password = md5($this->password . $this->salt . Yii::$app->params['passToken']);
             $this->create_time = time();
         }
         return parent::beforeSave($insert);

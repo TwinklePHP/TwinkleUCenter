@@ -8,10 +8,10 @@
 
 namespace app\controllers;
 
-use Yii;
 use app\base\api\Controller;
 use app\helpers\Str;
 use twinkle\service\Api;
+use Yii;
 
 class ApiController extends Controller
 {
@@ -22,20 +22,21 @@ class ApiController extends Controller
         $class = '\\app\\services\\' . Str::ucWords($serviceName) . 'Service';
 
         if (Yii::$app->request->isPost) {
-            $method = Yii::$app->request->post('method', 'error');
+            $methodName = Yii::$app->request->post('method', 'error');
             $params = Yii::$app->request->post();
             unset($params['method']);
         } else {
-            $method = Yii::$app->request->get('method', 'error');
+            $methodName = Yii::$app->request->get('method', 'error');
             $params = Yii::$app->request->get();
             unset($params['method']);
         }
+        $methodName = Str::ucWords($methodName, '-', true);
 
         list($instance, $method, $args) = (new Api([
             'type' => 'http',
             'driver' => 'Http',
             'object' => $class,
-        ]))->parseRequest($method, $params);
+        ]))->parseRequest($methodName, $params);
 
         return $this->asJson(($method->invokeArgs($instance, $args)));
     }
