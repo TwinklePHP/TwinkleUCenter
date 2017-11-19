@@ -8,10 +8,12 @@
 
 namespace app\services;
 
+use app\models\UserLoginLog;
+use Yii;
 use app\base\Service;
 use app\models\UserExtend;
 use app\models\UserInfo;
-use Yii;
+use yii\db\Expression;
 
 class UserService extends Service
 {
@@ -64,6 +66,19 @@ class UserService extends Service
         if ($userInfo['password'] <> md5($password . $userInfo['salt'] . Yii::$app->params['passToken'])) {
             return $this->format(['status' => 1, 'msg' => '密码不正确']);
         }
+        //记录登录信息
+        $nowTime = time();
+        $userExtendModel = new UserExtend();
+        $userExtendModel->saveData([
+            'user_id' => $userInfo['user_id'],
+            'last_login_time' => $nowTime,
+            'login_count' => new Expression('login_count+1'),
+        ]);
+        (new UserLoginLog())->saveData([
+            'user_id' => $userInfo['user_id'],
+            'create_time' => $nowTime
+        ],true);
+
         unset($userInfo['password'], $userInfo['salt']);
         return $this->format($userInfo);
     }

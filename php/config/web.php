@@ -31,6 +31,9 @@ $config = [
             'enableSchemaCache' => YII_ENV_PROD,
             'schemaCacheDuration' => 3600,
             'schemaCache' => 'cache',
+        ],
+        'ip' => [
+            'class' => 'app\components\ip',
         ]
     ],
     'params' => [

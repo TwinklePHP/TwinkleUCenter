@@ -8,10 +8,10 @@
 
 namespace app\controllers;
 
+use Yii;
 use app\base\rpc\Controller;
 use app\helpers\Str;
 use twinkle\service\Api;
-use Yii;
 
 class RpcController extends Controller
 {

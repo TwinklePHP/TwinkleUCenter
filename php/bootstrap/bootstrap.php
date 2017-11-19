@@ -7,7 +7,8 @@ defined('YII_DEBUG') || define('YII_DEBUG', ('dev' == YII_ENV || (isset($_GET['d
 
 require(__DIR__ . '/../vendor/autoload.php');
 require(__DIR__ . '/../vendor/yiisoft/yii2/Yii.php');
+Yii::$classMap['app\base\Application'] = __DIR__ . '/../base/Application.php';
 
 $config = require(__DIR__ . '/../config/web.php');
 
-$app = new \yii\web\Application($config);
+$app = new \app\base\Application($config);
