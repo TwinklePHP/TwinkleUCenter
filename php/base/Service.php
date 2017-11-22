@@ -40,4 +40,14 @@ abstract class Service
 
         return array_merge($this->result, $result);
     }
+
+    protected function fail($msg)
+    {
+        return $this->format(['status' => 1, 'msg' => $msg]);
+    }
+
+    protected function success($msg)
+    {
+        return $this->format(['msg'=>$msg]);
+    }
 }

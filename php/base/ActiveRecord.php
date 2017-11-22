@@ -31,6 +31,18 @@ class ActiveRecord extends \yii\db\ActiveRecord
     }
 
     /**
+     * 获取一条记录
+     *
+     * @param $params
+     * @return array | false
+     */
+    public function getOne($params)
+    {
+        $list = $this->getList($params);
+        return empty($list) ? false : $list[0];
+    }
+
+    /**
      * 查询列表
      *
      * @param array $params

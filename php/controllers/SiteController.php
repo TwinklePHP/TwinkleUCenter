@@ -8,15 +8,16 @@
 
 namespace app\controllers;
 
+use app\models\UserAddress;
 use Yii;
 use app\base\Controller;
-use app\models\UserInfo;
 
 class SiteController extends Controller
 {
 
     public function actionTest(){
-        print_r((new UserInfo())->getKey());
+        $userAddressModel = new UserAddress();
+        print_r($userAddressModel->getOne(['user_id'=>1,'select'=>'count(1) as count']));
     }
 
     public function actionFlushSchema()

@@ -6,6 +6,9 @@
  * Time: 21:31
  */
 
+/**
+ * 用户服务
+ */
 namespace app\services;
 
 use app\models\UserLoginLog;
@@ -24,7 +27,7 @@ class UserService extends Service
      * @param array $data
      * @return array
      */
-    public function register($data = [])
+    public function register($data)
     {
         if (empty($data['email'])) {
             return $this->format(['status' => 1, 'msg' => '邮箱不能为空']);
@@ -34,7 +37,7 @@ class UserService extends Service
         }
 
         $userInfoModel = new UserInfo();
-        if ($checkEmail = $userInfoModel->getUser(['email' => $data['email'], 'select' => 'email'])) {
+        if ($checkEmail = $userInfoModel->getUser(['email' => $data['email'], 'select' => 'user_id'])) {
             return $this->format(['status' => 1, 'msg' => '邮箱已存在']);
         }
 
