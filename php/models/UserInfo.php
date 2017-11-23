@@ -46,7 +46,7 @@ class UserInfo extends ActiveRecord
         $attributes = $this->attributes();
 
         foreach ($attributes as $key => $attr) {
-            if (in_array($attr, ['salt', 'create_time', 'is_validated', 'plat', 'lang'])) {
+            if (in_array($attr, ['salt', 'create_time', 'is_validated'])) {
                 unset($attributes[$key]);
             }
         }
@@ -63,5 +63,11 @@ class UserInfo extends ActiveRecord
             $this->create_time = time();
         }
         return parent::beforeSave($insert);
+    }
+
+    public function afterInsert()
+    {
+        // 将注册信息写入redis，用来发送注册邮件
+
     }
 }

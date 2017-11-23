@@ -25,9 +25,10 @@ class UserService extends Service
      * 注册接口
      *
      * @param array $data
+     * @param array $extend 额外信息
      * @return array
      */
-    public function register($data)
+    public function register($data, $extend = ['lang' => 'en', 'plat' => 1])
     {
         if (empty($data['email'])) {
             return $this->format(['status' => 1, 'msg' => '邮箱不能为空']);
@@ -65,6 +66,11 @@ class UserService extends Service
             }
         }
 
+        if (!empty($userInfoData)) {
+            $userInfoData['lang'] = isset($extend['lang']) ? $extend['lang'] : 'en';
+            $userInfoData['plat'] = isset($extend['plat']) ? $extend['plat'] : 1;
+        }
+
         // ??? 考虑下要不要用事务来处理
         if ($result = $userInfoModel->saveData($userInfoData)) {
             $userExtendData['user_id'] = $userInfoModel->user_id;
@@ -95,7 +101,7 @@ class UserService extends Service
      * @param array $extend 其他补充信息 ['lang'=>'en','plat'=>1]
      * @return array
      */
-    public function login($email, $password, $extend = ['lang'=>'en','plat'=>1])
+    public function login($email, $password, $extend = ['lang' => 'en', 'plat' => 1])
     {
         $userInfoModel = new UserInfo();
         $userInfo = $userInfoModel->getUser(['email' => $email]);
@@ -106,17 +112,23 @@ class UserService extends Service
             return $this->format(['status' => 1, 'msg' => '密码不正确']);
         }
         //记录登录信息
+
+        empty($extend['lang']) && $extend['lang'] = 'en';
+        empty($extend['plat']) && $extend['plat'] = 1;
+
         $nowTime = time();
         $userExtendModel = new UserExtend();
         $userExtendModel->saveData([
             'user_id' => $userInfo['user_id'],
             'last_login_time' => $nowTime,
             'login_count' => new Expression('login_count+1'),
+            'last_login_lang' => $extend['lang'],
+            'last_login_plat' => $extend['plat'],
         ]);
         (new UserLoginLog())->saveData([
             'user_id' => $userInfo['user_id'],
-            'lang' => isset($extend['lang']) ? $extend['lang'] : 'en',
-            'plat' => isset($extend['plat']) ? $extend['plat'] : 1,
+            'lang' => $extend['lang'],
+            'plat' => $extend['plat'],
             'create_time' => $nowTime
         ], true);
 
