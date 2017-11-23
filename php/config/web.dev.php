@@ -9,9 +9,9 @@
 return [
     'components' => [
         'db' => [
-            'dsn' => 'mysql:host=127.0.0.1;dbname=db_twinkle_ucenter',
-            'username' => 'root',
-            'password' => '',
+            'dsn' => 'mysql:host=local.mysql.test;dbname=db_twinkle_ucenter',
+            'username' => 'db_twinkle',
+            'password' => 'Twinkle2017',
         ]
     ]
 ];

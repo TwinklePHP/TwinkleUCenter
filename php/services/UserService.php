@@ -11,16 +11,16 @@
  */
 namespace app\services;
 
-use app\models\UserLoginLog;
-use Yii;
 use app\base\Service;
 use app\models\UserExtend;
 use app\models\UserInfo;
+use app\models\UserLoginLog;
+use app\models\UserOpen;
+use Yii;
 use yii\db\Expression;
 
 class UserService extends Service
 {
-
     /**
      * 注册接口
      *
@@ -41,14 +41,49 @@ class UserService extends Service
             return $this->format(['status' => 1, 'msg' => '邮箱已存在']);
         }
 
-        if ($result = $userInfoModel->saveData($data)) {
-            $data['user_id'] = $userInfoModel->user_id;
-            $userExtendModel = new UserExtend();
-            if (!($resultExtend = $userExtendModel->saveData($data))) {
+        $userExtendModel = new UserExtend();
+        $userOpenModel = new UserOpen();
+        $userInfoFields = $userInfoModel->fromUserAttributes();
+        $userInfoData = [];
+        $userExtendFields = $userExtendModel->fromUserAttributes();
+        $userExtendData = [];
+        $userOpenFields = $userOpenModel->fromUserAttributes();
+        $userOpenData = [];
+
+        foreach ($data as $key => $value) {
+            if ($key == 'password' && empty($value)) {
+                return $this->format(['status' => 1, 'msg' => '密码能为空']);
+            }
+            if (in_array($key, $userInfoFields)) {
+                $userInfoData[$key] = $value;
+            }
+            if (in_array($key, $userExtendFields)) {
+                $userExtendData[$key] = $value;
+            }
+            if (in_array($key, $userOpenFields)) {
+                $userOpenData[$key] = $value;
+            }
+        }
+
+        // ??? 考虑下要不要用事务来处理
+        if ($result = $userInfoModel->saveData($userInfoData)) {
+            $userExtendData['user_id'] = $userInfoModel->user_id;
+            if (!($resultExtend = $userExtendModel->saveData($userExtendData))) {
                 $userInfoModel->delete();
                 $result = false;
             }
         }
+
+        // 第三方注册判断
+        if ($result && !empty($userOpenData)) {
+            $userOpenData['user_id'] = $userInfoModel->user_id;
+            if (!($resultOpen = $userOpenModel->saveData($userOpenData))) {
+                $userInfoModel->delete();
+                $userExtendModel->delete();
+                $result = false;
+            }
+        }
+
         return $this->format($result);
     }
 
@@ -57,9 +92,10 @@ class UserService extends Service
      *
      * @param string $email
      * @param string $password
+     * @param array $extend 其他补充信息 ['lang'=>'en','plat'=>1]
      * @return array
      */
-    public function login($email, $password)
+    public function login($email, $password, $extend = ['lang'=>'en','plat'=>1])
     {
         $userInfoModel = new UserInfo();
         $userInfo = $userInfoModel->getUser(['email' => $email]);
@@ -79,15 +115,17 @@ class UserService extends Service
         ]);
         (new UserLoginLog())->saveData([
             'user_id' => $userInfo['user_id'],
+            'lang' => isset($extend['lang']) ? $extend['lang'] : 'en',
+            'plat' => isset($extend['plat']) ? $extend['plat'] : 1,
             'create_time' => $nowTime
-        ],true);
+        ], true);
 
         unset($userInfo['password'], $userInfo['salt']);
         return $this->format($userInfo);
     }
 
     /**
-     * 编辑指定用户信息
+     * 编辑单个用户信息
      *
      * @param int|array $condition
      * @param array $data
@@ -107,9 +145,11 @@ class UserService extends Service
             return $this->format(['status' => 1, 'msg' => '无符合条件用户']);
         }
 
-        $userInfoFields = ['password', 'first_name', 'last_name', 'sex', 'msn', 'phone', 'is_validated', 'avatar'];
+        $userExtendModel = new UserExtend();
+
+        $userInfoFields = $userInfoModel->fromUserAttributes();
         $userInfoData = [];
-        $userExtendFields = [];
+        $userExtendFields = $userExtendModel->fromUserAttributes();
         $userExtendData = [];
         foreach ($data as $key => $value) {
             if ($key == 'password' && empty($value)) {
@@ -132,16 +172,15 @@ class UserService extends Service
             }
             $result = $userInfoModel->saveData($userInfoData);
         }
-        $resultExtend = true;
+
         if (!empty($userExtendData) && $result) {
             $userExtendData['user_id'] = $userInfo['user_id'];
-            $userExtendModel = new UserExtend();
             if (!($resultExtend = $userExtendModel->saveData($userExtendData))) {
                 $userInfoModel->saveData($userInfo);
                 $result = false;
             }
         }
-        return $this->format($result && $resultExtend);
+        return $this->format($result);
     }
 
     /**

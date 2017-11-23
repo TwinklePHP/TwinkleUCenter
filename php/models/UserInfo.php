@@ -41,6 +41,19 @@ class UserInfo extends ActiveRecord
         return empty($userList) ? false : $userList[0];
     }
 
+    public function fromUserAttributes()
+    {
+        $attributes = $this->attributes();
+
+        foreach ($attributes as $key => $attr) {
+            if (in_array($attr, ['salt', 'create_time', 'is_validated', 'plat', 'lang'])) {
+                unset($attributes[$key]);
+            }
+        }
+
+        return array_values($attributes);
+    }
+
 
     public function beforeSave($insert)
     {

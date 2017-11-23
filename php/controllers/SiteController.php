@@ -17,7 +17,7 @@ class SiteController extends Controller
 
     public function actionTest(){
         $userAddressModel = new UserAddress();
-        print_r($userAddressModel->getOne(['user_id'=>1,'select'=>'count(1) as count']));
+        print_r($userAddressModel->attributes());
     }
 
     public function actionFlushSchema()

@@ -21,13 +21,29 @@ class ActiveRecord extends \yii\db\ActiveRecord
         );
     }
 
+    /**
+     * 获取主键
+     *
+     * @return string | array
+     */
     public static function getKey()
     {
         $keys = static::primaryKey();
+        print_r($keys);
         if (count($keys) == 1) {
             return $keys[0];
         }
         return $keys;
+    }
+
+    /**
+     * 允许接收用户输入的字段
+     *
+     * @return array
+     */
+    public function fromUserAttributes()
+    {
+        return $this->attributes();
     }
 
     /**

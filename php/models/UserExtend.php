@@ -22,4 +22,8 @@ class UserExtend extends ActiveRecord
         ];
     }
 
+    public function fromUserAttributes()
+    {
+        return [];
+    }
 }
