@@ -23,6 +23,7 @@ $config = [
                 '<controller:(rpc|api)>/<name:[\w-]+><nouse:(.*)>' => '<controller>/index',
                 '<controller:[\w-]+>/<action:[\w-]+><nouse:(.*)>' => '<controller>/<action>',
                 '<controller:[\w-]+><nouse:(.*)>' => '<controller>/index',
+                '' => 'site/index'
             ],
         ],
         'db' => [

@@ -118,8 +118,8 @@ class UserService extends Service
         if ($userInfo['password'] <> md5($password . $userInfo['salt'] . Yii::$app->params['passToken'])) {
             return $this->format(['status' => 1, 'msg' => '密码不正确']);
         }
-        //记录登录信息
 
+        //记录登录信息
         empty($extend['lang']) && $extend['lang'] = 'en';
         empty($extend['plat']) && $extend['plat'] = 1;
 
@@ -140,7 +140,7 @@ class UserService extends Service
         ], true);
 
         unset($userInfo['password'], $userInfo['salt']);
-        return $this->format($userInfo);
+        return $this->format(['user_info'=>$userInfo]);
     }
 
     /**
