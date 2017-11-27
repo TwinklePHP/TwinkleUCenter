@@ -25,7 +25,7 @@ class UserService extends Service
      * 注册接口
      *
      * @param array $data
-     * @param array $extend 额外信息
+     * @param array $extend 其他补充信息 ['lang' => 'en', 'plat' => 1]
      * @return array
      */
     public function register($data, $extend = ['lang' => 'en', 'plat' => 1])
@@ -71,23 +71,30 @@ class UserService extends Service
             $userInfoData['plat'] = isset($extend['plat']) ? $extend['plat'] : 1;
         }
 
-        // ??? 考虑下要不要用事务来处理
-        if ($result = $userInfoModel->saveData($userInfoData)) {
-            $userExtendData['user_id'] = $userInfoModel->user_id;
-            if (!($resultExtend = $userExtendModel->saveData($userExtendData))) {
-                $userInfoModel->delete();
-                $result = false;
+        $trans = Yii::$app->db->beginTransaction();
+        try {
+            if ($result = $userInfoModel->saveData($userInfoData)) {
+                $userExtendData['user_id'] = $userInfoModel->user_id;
+                if (!($resultExtend = $userExtendModel->saveData($userExtendData))) {
+                    $result = false;
+                }
             }
-        }
 
-        // 第三方注册判断
-        if ($result && !empty($userOpenData)) {
-            $userOpenData['user_id'] = $userInfoModel->user_id;
-            if (!($resultOpen = $userOpenModel->saveData($userOpenData))) {
-                $userInfoModel->delete();
-                $userExtendModel->delete();
-                $result = false;
+            // 第三方注册判断
+            if ($result && !empty($userOpenData)) {
+                $userOpenData['user_id'] = $userInfoModel->user_id;
+                if (!($resultOpen = $userOpenModel->saveData($userOpenData))) {
+                    $result = false;
+                }
             }
+            if ($result == false) {
+                $trans->rollBack();
+            } else {
+                $trans->commit();
+            }
+        } catch (\Exception $e) {
+            $trans->rollBack();
+            return $this->fail($e->getMessage());
         }
 
         return $this->format($result);
@@ -175,23 +182,36 @@ class UserService extends Service
             }
         }
 
-        $result = true;
-        if (!empty($userInfoData)) {
-            $userInfoData['user_id'] = $userInfo['user_id'];
-            if (isset($userInfoData['password'])) {
-                $userInfoData['salt'] = md5(rand());
-                $userInfoData['password'] = md5($userInfoData['password'] . $userInfoData['salt'] . Yii::$app->params['passToken']);
+        $trans = Yii::$app->db->beginTransaction();
+        try {
+            $result = true;
+            if (!empty($userInfoData)) {
+                $userInfoData['user_id'] = $userInfo['user_id'];
+                if (isset($userInfoData['password'])) {
+                    $userInfoData['salt'] = md5(rand());
+                    $userInfoData['password'] = md5($userInfoData['password'] . $userInfoData['salt'] . Yii::$app->params['passToken']);
+                }
+                $result = $userInfoModel->saveData($userInfoData);
             }
-            $result = $userInfoModel->saveData($userInfoData);
+
+            if (!empty($userExtendData) && $result) {
+                $userExtendData['user_id'] = $userInfo['user_id'];
+                if (!($resultExtend = $userExtendModel->saveData($userExtendData))) {
+                    $result = false;
+                }
+            }
+
+            if ($result == false) {
+                $trans->rollBack();
+            } else {
+                $trans->commit();
+            }
+
+        } catch (\Exception $e) {
+            $trans->rollBack();
+            return $this->fail($e->getMessage());
         }
 
-        if (!empty($userExtendData) && $result) {
-            $userExtendData['user_id'] = $userInfo['user_id'];
-            if (!($resultExtend = $userExtendModel->saveData($userExtendData))) {
-                $userInfoModel->saveData($userInfo);
-                $result = false;
-            }
-        }
         return $this->format($result);
     }
 
