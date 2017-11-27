@@ -11,11 +11,20 @@ namespace app\controllers;
 use app\models\UserAddress;
 use Yii;
 use app\base\Controller;
+use yii\helpers\Markdown;
 
 class SiteController extends Controller
 {
 
-    public function actionTest(){
+    public function actionIndex()
+    {
+
+        $file = __DIR__.'/../../document/markdown/1.install.md';
+        echo Markdown::process(file_get_contents($file),'gfm-comment');
+    }
+
+    public function actionTest()
+    {
         $userAddressModel = new UserAddress();
         print_r($userAddressModel->attributes());
     }
