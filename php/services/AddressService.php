@@ -20,7 +20,7 @@ class AddressService extends Service
     /**
      * 获取用户地址列表
      *
-     * @param $userId
+     * @param int $userId
      * @return array
      */
     public function getAddressList($userId)
@@ -38,10 +38,11 @@ class AddressService extends Service
     /**
      * 通过address_id获取地址信息
      *
-     * @param $addressId
+     * @param int $addressId
+     * @param int $userId
      * @return array
      */
-    public function getAddress($addressId)
+    public function getAddress($addressId, $userId)
     {
         if (empty($addressId)) {
             $this->fail('地址ID不存在');
@@ -52,7 +53,11 @@ class AddressService extends Service
             $this->fail('地址不存在');
         }
 
-        return $this->format($addressInfo);
+        if ($addressInfo['user_id'] <> $userId) {
+            $this->fail('无权限查看');
+        }
+
+        return $this->format(['address_info' => $addressInfo]);
     }
 
     /**

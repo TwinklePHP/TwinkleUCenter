@@ -31,14 +31,47 @@ class UserInfo extends ActiveRecord
         ];
     }
 
+    /**
+     * 获取单个用户信息
+     *
+     * @param array $params
+     * @return bool|mixed|\yii\db\ActiveRecord
+     */
     public function getUser($params = [])
     {
         if (empty($params)) {
             return false;
         }
         $params['limit'] = 1;
+        $params['select'] = 'ue.*,u.email,u.`password`,u.salt,u.first_name,u.last_name,u.sex,u.msn,u.phone,u.is_validated,u.avatar,u.lang,u.plat,u.create_time';
         $userList = $this->getList($params);
         return empty($userList) ? false : $userList[0];
+    }
+
+
+    /**
+     * 查询用户列表
+     *
+     * @param array $params
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public function getList($params = [])
+    {
+        $userInfoAttr = $this->attributes();
+        $userExtendAttr = (new UserExtend())->attributes();
+        foreach ($params as $key => $value) {
+            if (in_array($key, $userInfoAttr)) {
+                $params["u.{$key}"] = $value;
+                unset($params[$key]);
+            } elseif (in_array($key, $userExtendAttr)) {
+                $params["ue.{$key}"] = $value;
+                unset($params[$key]);
+            }
+        }
+        $params['alias'] = 'u';
+        $params['left join'] = ['user_extend ue' => 'ue.user_id = u.user_id'];
+        empty($params['select']) && $params['select'] = 'ue.*,u.email,u.first_name,u.last_name,u.sex,u.msn,u.phone,u.is_validated,u.avatar,u.lang,u.plat,u.create_time';
+        return $this->setWhere($params)->asArray()->all();
     }
 
     public function fromUserAttributes()

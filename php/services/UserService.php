@@ -31,15 +31,15 @@ class UserService extends Service
     public function register($data, $extend = ['lang' => 'en', 'plat' => 1])
     {
         if (empty($data['email'])) {
-            return $this->format(['status' => 1, 'msg' => '邮箱不能为空']);
+            return $this->fail('邮箱不能为空');
         }
         if (empty($data['password'])) {
-            return $this->format(['status' => 1, 'msg' => '密码不能为空']);
+            return $this->fail('密码不能为空');
         }
 
         $userInfoModel = new UserInfo();
         if ($checkEmail = $userInfoModel->getUser(['email' => $data['email'], 'select' => 'user_id'])) {
-            return $this->format(['status' => 1, 'msg' => '邮箱已存在']);
+            return $this->fail('邮箱已存在');
         }
 
         $userExtendModel = new UserExtend();
@@ -53,7 +53,7 @@ class UserService extends Service
 
         foreach ($data as $key => $value) {
             if ($key == 'password' && empty($value)) {
-                return $this->format(['status' => 1, 'msg' => '密码能为空']);
+                return $this->fail('密码能为空');
             }
             if (in_array($key, $userInfoFields)) {
                 $userInfoData[$key] = $value;
@@ -97,7 +97,7 @@ class UserService extends Service
             return $this->fail($e->getMessage());
         }
 
-        return $this->format($result);
+        return $this->format($result ? ['user_id' => $userInfoModel->user_id] : false);
     }
 
     /**
@@ -140,7 +140,7 @@ class UserService extends Service
         ], true);
 
         unset($userInfo['password'], $userInfo['salt']);
-        return $this->format(['user_info'=>$userInfo]);
+        return $this->format(['user_info' => $userInfo]);
     }
 
     /**
@@ -216,6 +216,21 @@ class UserService extends Service
     }
 
     /**
+     * 查询用户信息
+     *
+     * @param $userId
+     * @return array
+     */
+    public function getUserById($userId)
+    {
+        if (empty($userId)) {
+            return $this->fail('用户ID不能为空');
+        }
+        $userInfo = (new UserInfo())->getList(['user_id' => $userId]);
+        return $this->format($userInfo ? ['user_info' => $userInfo[0]] : false);
+    }
+
+    /**
      * 查询用户列表
      *
      * @param array $params 查询条件
@@ -229,18 +244,18 @@ class UserService extends Service
         $params['offset'] = ($page - 1) * $pageSize;
         $params['pageSize'] = $pageSize;
         $userList = (new UserInfo())->getList($params);
-        return $this->format($userList);
+        return $this->format($userList ? ['list' => $userList] : false);
     }
 
     /**
-     * 通过user_id查询用户信息
+     * 通过user_id批量查询用户信息
      * @param $userIdArr
      * @return array
      */
     public function getUserByIds($userIdArr)
     {
         $userIdStr = implode(',', $userIdArr);
-        $params['orderBy'] = "FIND_IN_SET(goods_id,'{$userIdStr}')";
+        $params['orderBy'] = "FIND_IN_SET(user_id,'{$userIdStr}')";
         $params['in'] = [['user_id' => $userIdArr]];
         return $this->getUserByCondition($params, 1, count($userIdArr));
     }
