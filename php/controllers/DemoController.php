@@ -14,8 +14,6 @@ use app\base\rpc\Controller;
 class DemoController extends Controller
 {
     
-    const DOMAIN = 'http://my.io';
-    
     public function actionIndex()
     {
         return $this->renderPartial('sign');
@@ -26,7 +24,7 @@ class DemoController extends Controller
         $username = Yii::$app->request->post('username', '');
         $password = Yii::$app->request->post('password', '');
         
-        $client = new \Yar_Client(self::DOMAIN . '/rpc/user');
+        $client = new \Yar_Client(Yii::$app->request->hostInfo . '/rpc/user');
         
         $result = $client->login($username, $password);
         
