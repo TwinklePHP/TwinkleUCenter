@@ -22,7 +22,7 @@
     </div>
 
 <?php else: ?>
-    echo $msg;
+    <?= $msg; ?>
 <? endif; ?>
 </body>
 </html>
