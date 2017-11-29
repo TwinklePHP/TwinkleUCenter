@@ -35,6 +35,9 @@ class UserService extends Service
         if (empty($data['email'])) {
             return $this->fail('邮箱不能为空');
         }
+        if (empty($data['first_name'])) {
+            return $this->fail('用户名称不能为空');
+        }
         if (empty($data['password'])) {
             return $this->fail('密码不能为空');
         }
@@ -78,7 +81,7 @@ class UserService extends Service
             $userInfoData['lang'] = isset($extend['lang']) ? $extend['lang'] : 'en';
             $userInfoData['plat'] = isset($extend['plat']) ? $extend['plat'] : 1;
         }
-
+        
         $trans = Yii::$app->db->beginTransaction();
         try {
             if ($result = $userInfoModel->saveData($userInfoData)) {

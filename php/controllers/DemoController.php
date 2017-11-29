@@ -16,8 +16,6 @@ use Yii;
 class DemoController extends Controller
 {
 
-    const DOMAIN_URL = 'http://www.uc.com';
-
     public function actionIndex()
     {
         return $this->renderPartial('sign');
@@ -72,25 +70,23 @@ class DemoController extends Controller
 
     public function actionSignUp()
     {
+        $email = Yii::$app->request->post('email', '');
         $username = Yii::$app->request->post('username', '');
         $password = Yii::$app->request->post('password', '');
         $repassword = Yii::$app->request->post('repassword', '');
 
-        $client = new \Yar_Client(self::DOMAIN_URL . '/rpc/user');
+        $client = new \Yar_Client(Yii::$app->request->hostInfo . '/rpc/user');
         $data = array(
-            'username' => $username,
+            'email' => $email,
+            'first_name' => $username,
             'password' => $password,
             'repassword' => $repassword,
         );
         $result = $client->register($data);
         if (isset($result['status']) && $result['status'] === 0) {
-            $info = empty($result['user_info']) ? [] : $result['user_info'];
-            return $this->renderPartial('register', [
-                        'info' => $info,
-                        'step' => 'login_success',
-            ]);
+            header("Location: " . Yii::$app->request->hostInfo . "/demo/index");
+            exit;
         }
-
         return $this->renderPartial('register', ['step' => 'login_fail']);
     }
 

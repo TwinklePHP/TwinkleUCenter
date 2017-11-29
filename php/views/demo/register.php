@@ -16,10 +16,11 @@
                 <h3>用户注册演示</h3>
 
                 <form action="/demo/sign-up" method="post">
+                    <p>邮箱：<input type="text" name="email"></p>
                     <p>用户名：<input type="text" name="username"></p>
                     <p>密码：<input type="password" name="password"></p>
                     <p>确认密码：<input type="password" name="repassword"></p>
-                    <p><input type="submit" value="注册"></p>
+                    <p><input type="submit" value="注册"><a href="/demo/index">登录</a></p>
                 </form>
 
             <?php elseif ($step == 'login_success'): ?>
