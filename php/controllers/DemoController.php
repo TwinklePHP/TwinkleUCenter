@@ -44,7 +44,7 @@ class DemoController extends Controller
     public function actionEdit()
     {
 
-        $client = new Client('Yar', 'http://www.twinklephp.con/rpc/user');
+        $client = new Client('Yar', 'http://www.twinklephp.com/rpc/user');
 
         if (Yii::$app->request->isPost) {
             $editInfo = Yii::$app->request->post();
@@ -74,7 +74,6 @@ class DemoController extends Controller
         $username = Yii::$app->request->post('username', '');
         $password = Yii::$app->request->post('password', '');
         $repassword = Yii::$app->request->post('repassword', '');
-
         $client = new \Yar_Client(Yii::$app->request->hostInfo . '/rpc/user');
         $data = array(
             'email' => $email,

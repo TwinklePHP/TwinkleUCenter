@@ -50,4 +50,8 @@ php/composer.lock
 php/vendor/
 php/config/web.prod.php
 php/config/web.test.php
+<<<<<<< Updated upstream
 /nbproject/*
+=======
+/nbproject/private/
+>>>>>>> Stashed changes
