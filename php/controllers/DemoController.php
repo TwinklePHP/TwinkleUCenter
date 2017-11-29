@@ -35,8 +35,8 @@ class DemoController extends Controller
         if (isset($result['status']) && $result['status'] === 0) {
             $info = empty($result['user_info']) ? [] : $result['user_info'];
             return $this->renderPartial('sign', [
-                        'info' => $info,
-                        'step' => 'login_success',
+                'info' => $info,
+                'step' => 'login_success',
             ]);
         }
 
@@ -46,22 +46,22 @@ class DemoController extends Controller
     public function actionEdit()
     {
 
-        $client = new Client('Yar', 'http://www.twinklephp.con/rpc/user');
+        $client = new Client('Yar', 'http://www.twinklephp.com/rpc/user');
 
         if (Yii::$app->request->isPost) {
             $editInfo = Yii::$app->request->post();
             $result = $client->editUser($editInfo['user_id'], $editInfo);
             return $this->renderPartial('edit', [
-                        'msg' => $result['status'] ? '保存失败' : '修改成功',
-                        'step' => 'save'
+                'msg' => $result['status'] ? '保存失败' : '修改成功',
+                'step' => 'save'
             ]);
         }
 
         $id = Yii::$app->request->get('user_id');
         $userInfo = $client->getUserById($id);
         return $this->renderPartial('edit', [
-                    'user_info' => $userInfo['user_info'],
-                    'step' => 'read'
+            'user_info' => $userInfo['user_info'],
+            'step' => 'read'
         ]);
     }
 
@@ -86,8 +86,8 @@ class DemoController extends Controller
         if (isset($result['status']) && $result['status'] === 0) {
             $info = empty($result['user_info']) ? [] : $result['user_info'];
             return $this->renderPartial('register', [
-                        'info' => $info,
-                        'step' => 'login_success',
+                'info' => $info,
+                'step' => 'login_success',
             ]);
         }
 

@@ -18,6 +18,7 @@ use app\models\UserInfo;
 use app\models\UserLoginLog;
 use app\models\UserOpen;
 use Yii;
+use yii\base\InvalidParamException;
 use yii\db\Expression;
 
 class UserService extends Service
@@ -152,7 +153,7 @@ class UserService extends Service
     }
 
     /**
-     * 编辑单个用户信息
+     * 编辑用户信息
      *
      * @param int|array $condition
      * @param array $data
@@ -161,10 +162,12 @@ class UserService extends Service
     public function editUser($condition, $data = [])
     {
         $where = [];
-        if (is_int($condition)) {
+        if (is_numeric($condition)) {
             $where['user_id'] = $condition;
-        } else {
+        } elseif(is_array($condition)) {
             $where = $condition;
+        } else {
+            return $this->fail('参数不合法');
         }
         $userInfoModel = new UserInfo();
         $userInfo = $userInfoModel->getUser($where);
