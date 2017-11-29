@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: chengwopei
@@ -15,6 +16,12 @@ use Yii;
 class DemoController extends Controller
 {
 
+<<<<<<< Updated upstream
+=======
+    const DOMAIN = 'http://my.io';
+    const DOMAIN_URL = 'http://www.uc.com';
+
+>>>>>>> Stashed changes
     public function actionIndex()
     {
         return $this->renderPartial('sign');
@@ -25,21 +32,26 @@ class DemoController extends Controller
         $username = Yii::$app->request->post('username', '');
         $password = Yii::$app->request->post('password', '');
 
+<<<<<<< Updated upstream
         $client = new \Yar_Client(Yii::$app->request->hostInfo . '/rpc/user');
+=======
+        $client = new \Yar_Client(self::DOMAIN . '/rpc/user');
+>>>>>>> Stashed changes
 
         $result = $client->login($username, $password);
 
         if (isset($result['status']) && $result['status'] === 0) {
             $info = empty($result['user_info']) ? [] : $result['user_info'];
             return $this->renderPartial('sign', [
-                'info' => $info,
-                'step' => 'login_success',
+                        'info' => $info,
+                        'step' => 'login_success',
             ]);
         }
 
         return $this->renderPartial('sign', ['step' => 'login_fail']);
     }
 
+<<<<<<< Updated upstream
     public function actionEdit()
     {
 
@@ -63,3 +75,35 @@ class DemoController extends Controller
     }
 
 }
+=======
+    public function actionRegister()
+    {
+        return $this->renderPartial('register');
+    }
+
+    public function actionSignUp()
+    {
+        $username = Yii::$app->request->post('username', '');
+        $password = Yii::$app->request->post('password', '');
+        $repassword = Yii::$app->request->post('repassword', '');
+
+        $client = new \Yar_Client(self::DOMAIN_URL . '/rpc/user');
+        $data = array(
+            'username' => $username,
+            'password' => $password,
+            'repassword' => $repassword,
+        );
+        $result = $client->register($data);
+        if (isset($result['status']) && $result['status'] === 0) {
+            $info = empty($result['user_info']) ? [] : $result['user_info'];
+            return $this->renderPartial('register', [
+                        'info' => $info,
+                        'step' => 'login_success',
+            ]);
+        }
+
+        return $this->renderPartial('register', ['step' => 'login_fail']);
+    }
+
+}
+>>>>>>> Stashed changes

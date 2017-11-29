@@ -1,14 +1,15 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: huanjin
  * Date: 2017/11/15
  * Time: 21:31
  */
-
 /**
  * 用户服务
  */
+
 namespace app\services;
 
 use app\base\Service;
@@ -21,6 +22,7 @@ use yii\db\Expression;
 
 class UserService extends Service
 {
+
     /**
      * 注册接口
      *
@@ -35,6 +37,12 @@ class UserService extends Service
         }
         if (empty($data['password'])) {
             return $this->fail('密码不能为空');
+        }
+        if (empty($data['repassword'])) {
+            return $this->fail('确认密码不能为空');
+        }
+        if ($data['repassword'] != $data['repassword']) {
+            return $this->fail('密码不匹配');
         }
 
         $userInfoModel = new UserInfo();
@@ -137,7 +145,7 @@ class UserService extends Service
             'lang' => $extend['lang'],
             'plat' => $extend['plat'],
             'create_time' => $nowTime
-        ], true);
+                ], true);
 
         unset($userInfo['password'], $userInfo['salt']);
         return $this->format(['user_info' => $userInfo]);
@@ -206,7 +214,6 @@ class UserService extends Service
             } else {
                 $trans->commit();
             }
-
         } catch (\Exception $e) {
             $trans->rollBack();
             return $this->fail($e->getMessage());
@@ -259,4 +266,5 @@ class UserService extends Service
         $params['in'] = [['user_id' => $userIdArr]];
         return $this->getUserByCondition($params, 1, count($userIdArr));
     }
+
 }
