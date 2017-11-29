@@ -16,12 +16,8 @@ use Yii;
 class DemoController extends Controller
 {
 
-<<<<<<< Updated upstream
-=======
-    const DOMAIN = 'http://my.io';
     const DOMAIN_URL = 'http://www.uc.com';
 
->>>>>>> Stashed changes
     public function actionIndex()
     {
         return $this->renderPartial('sign');
@@ -32,11 +28,7 @@ class DemoController extends Controller
         $username = Yii::$app->request->post('username', '');
         $password = Yii::$app->request->post('password', '');
 
-<<<<<<< Updated upstream
         $client = new \Yar_Client(Yii::$app->request->hostInfo . '/rpc/user');
-=======
-        $client = new \Yar_Client(self::DOMAIN . '/rpc/user');
->>>>>>> Stashed changes
 
         $result = $client->login($username, $password);
 
@@ -51,7 +43,6 @@ class DemoController extends Controller
         return $this->renderPartial('sign', ['step' => 'login_fail']);
     }
 
-<<<<<<< Updated upstream
     public function actionEdit()
     {
 
@@ -61,21 +52,19 @@ class DemoController extends Controller
             $editInfo = Yii::$app->request->post();
             $result = $client->editUser($editInfo['user_id'], $editInfo);
             return $this->renderPartial('edit', [
-                'msg' => $result['status'] ? '保存失败' : '修改成功',
-                'step' => 'save'
+                        'msg' => $result['status'] ? '保存失败' : '修改成功',
+                        'step' => 'save'
             ]);
         }
 
         $id = Yii::$app->request->get('user_id');
         $userInfo = $client->getUserById($id);
         return $this->renderPartial('edit', [
-            'user_info' => $userInfo['user_info'],
-            'step' => 'read'
+                    'user_info' => $userInfo['user_info'],
+                    'step' => 'read'
         ]);
     }
 
-}
-=======
     public function actionRegister()
     {
         return $this->renderPartial('register');
@@ -106,4 +95,3 @@ class DemoController extends Controller
     }
 
 }
->>>>>>> Stashed changes
