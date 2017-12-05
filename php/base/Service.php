@@ -8,14 +8,29 @@
 
 namespace app\base;
 
+use Yii;
 
 abstract class Service
 {
     public $result = ['status' => 0, 'msg' => 'success'];
 
-    public function __construct()
-    {
+    public $siteCode = 'Twinkle';
 
+    public $plat = 1;
+
+    public $lang = 'en';
+
+    public function __construct($params = [])
+    {
+        if (!empty($params)) {
+            Yii::configure($this, $params);
+        }
+        Yii::$app->language = $this->lang;
+        $this->init();
+    }
+
+    public function init()
+    {
     }
 
     /**
@@ -48,6 +63,6 @@ abstract class Service
 
     protected function success($msg)
     {
-        return $this->format(['msg'=>$msg]);
+        return $this->format(['msg' => $msg]);
     }
 }

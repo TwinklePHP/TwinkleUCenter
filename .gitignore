@@ -46,7 +46,9 @@ Network Trash Folder
 Temporary Items
 .apdisk
 .idea/
+.svn/
 php/composer.lock
 php/vendor/
 php/config/web.prod.php
 php/config/web.test.php
+

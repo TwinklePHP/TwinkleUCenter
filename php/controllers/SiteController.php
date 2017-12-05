@@ -15,7 +15,6 @@ use yii\helpers\Markdown;
 
 class SiteController extends Controller
 {
-
     public function actionIndex()
     {
 
@@ -25,8 +24,7 @@ class SiteController extends Controller
 
     public function actionTest()
     {
-        $userAddressModel = new UserAddress();
-        print_r($userAddressModel->attributes());
+        print_r( Yii::t('app', 'email_can_not_empty'));
     }
 
     public function actionFlushSchema()

@@ -25,13 +25,12 @@ class UserService extends Service
      * 注册接口
      *
      * @param array $data
-     * @param array $extend 其他补充信息 ['lang' => 'en', 'plat' => 1]
      * @return array
      */
-    public function register($data, $extend = ['lang' => 'en', 'plat' => 1])
+    public function register($data)
     {
         if (empty($data['email'])) {
-            return $this->fail('邮箱不能为空');
+            return $this->fail(Yii::t('user', 'email_can_not_empty'));
         }
         if (empty($data['password'])) {
             return $this->fail('密码不能为空');
@@ -67,8 +66,8 @@ class UserService extends Service
         }
 
         if (!empty($userInfoData)) {
-            $userInfoData['lang'] = isset($extend['lang']) ? $extend['lang'] : 'en';
-            $userInfoData['plat'] = isset($extend['plat']) ? $extend['plat'] : 1;
+            $userInfoData['lang'] = $this->lang;
+            $userInfoData['plat'] = $this->plat;
         }
 
         $trans = Yii::$app->db->beginTransaction();
@@ -105,10 +104,9 @@ class UserService extends Service
      *
      * @param string $email
      * @param string $password
-     * @param array $extend 其他补充信息 ['lang'=>'en','plat'=>1]
      * @return array
      */
-    public function login($email, $password, $extend = ['lang' => 'en', 'plat' => 1])
+    public function login($email, $password)
     {
         $userInfoModel = new UserInfo();
         $userInfo = $userInfoModel->getUser(['email' => $email]);
@@ -120,22 +118,19 @@ class UserService extends Service
         }
 
         //记录登录信息
-        empty($extend['lang']) && $extend['lang'] = 'en';
-        empty($extend['plat']) && $extend['plat'] = 1;
-
         $nowTime = time();
         $userExtendModel = new UserExtend();
         $userExtendModel->saveData([
             'user_id' => $userInfo['user_id'],
             'last_login_time' => $nowTime,
             'login_count' => new Expression('login_count+1'),
-            'last_login_lang' => $extend['lang'],
-            'last_login_plat' => $extend['plat'],
+            'last_login_lang' => $this->lang,
+            'last_login_plat' => $this->plat,
         ]);
         (new UserLoginLog())->saveData([
             'user_id' => $userInfo['user_id'],
-            'lang' => $extend['lang'],
-            'plat' => $extend['plat'],
+            'lang' => $this->lang,
+            'plat' => $this->plat,
             'create_time' => $nowTime
         ], true);
 

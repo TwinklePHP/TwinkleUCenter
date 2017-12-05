@@ -33,6 +33,13 @@ $config = [
             'schemaCacheDuration' => 3600,
             'schemaCache' => 'cache',
         ],
+        'i18n' => [
+            'translations' => [
+                '*' => [
+                    'class' => 'yii\i18n\PhpMessageSource',
+                ],
+            ],
+        ],
         'ip' => [
             'class' => 'app\components\ip',
         ]

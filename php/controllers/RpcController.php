@@ -18,12 +18,13 @@ class RpcController extends Controller
 
     public function actionIndex()
     {
+        $params = Yii::$app->request->get();
         $serviceName = Yii::$app->request->get('name', 'NotFound');
         $class = '\\app\\services\\' . Str::ucWords($serviceName) . 'Service';
         new Api([
             'type' => 'rpc',
             'driver' => 'Yar',
-            'object' => new $class,
+            'object' => new $class($params),
         ]);
     }
 
