@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: chengwopei
@@ -32,8 +33,8 @@ class DemoController extends Controller
         if (isset($result['status']) && $result['status'] === 0) {
             $info = empty($result['user_info']) ? [] : $result['user_info'];
             return $this->renderPartial('sign', [
-                'info' => $info,
-                'step' => 'login_success',
+                        'info' => $info,
+                        'step' => 'login_success',
             ]);
         }
 
@@ -43,23 +44,49 @@ class DemoController extends Controller
     public function actionEdit()
     {
 
-        $client = new Client('Yar', 'http://www.twinklephp.con/rpc/user');
+        $client = new Client('Yar', 'http://www.twinklephp.com/rpc/user');
 
         if (Yii::$app->request->isPost) {
             $editInfo = Yii::$app->request->post();
             $result = $client->editUser($editInfo['user_id'], $editInfo);
             return $this->renderPartial('edit', [
-                'msg' => $result['status'] ? '保存失败' : '修改成功',
-                'step' => 'save'
+                        'msg' => $result['status'] ? '保存失败' : '修改成功',
+                        'step' => 'save'
             ]);
         }
 
         $id = Yii::$app->request->get('user_id');
         $userInfo = $client->getUserById($id);
         return $this->renderPartial('edit', [
-            'user_info' => $userInfo['user_info'],
-            'step' => 'read'
+                    'user_info' => $userInfo['user_info'],
+                    'step' => 'read'
         ]);
+    }
+
+    public function actionRegister()
+    {
+        return $this->renderPartial('register');
+    }
+
+    public function actionSignUp()
+    {
+        $email = Yii::$app->request->post('email', '');
+        $username = Yii::$app->request->post('username', '');
+        $password = Yii::$app->request->post('password', '');
+        $repassword = Yii::$app->request->post('repassword', '');
+        $client = new \Yar_Client(Yii::$app->request->hostInfo . '/rpc/user');
+        $data = array(
+            'email' => $email,
+            'first_name' => $username,
+            'password' => $password,
+            'repassword' => $repassword,
+        );
+        $result = $client->register($data);
+        if (isset($result['status']) && $result['status'] === 0) {
+            header("Location: " . Yii::$app->request->hostInfo . "/demo/index");
+            exit;
+        }
+        return $this->renderPartial('register', ['step' => 'login_fail']);
     }
 
 }

@@ -1,14 +1,15 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: huanjin
  * Date: 2017/11/15
  * Time: 21:31
  */
-
 /**
  * 用户服务
  */
+
 namespace app\services;
 
 use app\base\Service;
@@ -21,6 +22,7 @@ use yii\db\Expression;
 
 class UserService extends Service
 {
+
     /**
      * 注册接口
      *
@@ -32,8 +34,17 @@ class UserService extends Service
         if (empty($data['email'])) {
             return $this->fail(Yii::t('user', 'email_can_not_empty'));
         }
+        if (empty($data['first_name'])) {
+            return $this->fail('用户名称不能为空');
+        }
         if (empty($data['password'])) {
             return $this->fail('密码不能为空');
+        }
+        if (empty($data['repassword'])) {
+            return $this->fail('确认密码不能为空');
+        }
+        if ($data['repassword'] != $data['repassword']) {
+            return $this->fail('密码不匹配');
         }
 
         $userInfoModel = new UserInfo();
@@ -69,7 +80,7 @@ class UserService extends Service
             $userInfoData['lang'] = $this->lang;
             $userInfoData['plat'] = $this->plat;
         }
-
+        
         $trans = Yii::$app->db->beginTransaction();
         try {
             if ($result = $userInfoModel->saveData($userInfoData)) {
@@ -132,14 +143,14 @@ class UserService extends Service
             'lang' => $this->lang,
             'plat' => $this->plat,
             'create_time' => $nowTime
-        ], true);
+                ], true);
 
         unset($userInfo['password'], $userInfo['salt']);
         return $this->format(['user_info' => $userInfo]);
     }
 
     /**
-     * 编辑单个用户信息
+     * 编辑用户信息
      *
      * @param int|array $condition
      * @param array $data
@@ -148,10 +159,12 @@ class UserService extends Service
     public function editUser($condition, $data = [])
     {
         $where = [];
-        if (is_int($condition)) {
+        if (is_numeric($condition)) {
             $where['user_id'] = $condition;
-        } else {
+        } elseif(is_array($condition)) {
             $where = $condition;
+        } else {
+            return $this->fail('参数不合法');
         }
         $userInfoModel = new UserInfo();
         $userInfo = $userInfoModel->getUser($where);
@@ -201,7 +214,6 @@ class UserService extends Service
             } else {
                 $trans->commit();
             }
-
         } catch (\Exception $e) {
             $trans->rollBack();
             return $this->fail($e->getMessage());
@@ -254,4 +266,5 @@ class UserService extends Service
         $params['in'] = [['user_id' => $userIdArr]];
         return $this->getUserByCondition($params, 1, count($userIdArr));
     }
+
 }
