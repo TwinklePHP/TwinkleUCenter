@@ -29,7 +29,7 @@ abstract class Service
         $this->init();
     }
 
-    public function init()
+    protected function init()
     {
     }
 
