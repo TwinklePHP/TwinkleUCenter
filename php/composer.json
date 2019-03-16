@@ -4,7 +4,8 @@
   "minimum-stability": "dev",
   "require": {
     "twinkle/twinkle-api": "dev-master",
-    "yiisoft/yii2": "^2.0"
+    "yiisoft/yii2": "^2.0",
+    "thxyh99/zendframework": "dev-master"
   },
   "autoload": {
     "psr-4": {
